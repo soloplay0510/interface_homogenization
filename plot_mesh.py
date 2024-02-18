@@ -6,7 +6,7 @@ Created on Wed Feb 14 15:58:05 2024
 @author: min
 """
 
-from fenics import *
+# from fenics import *
 import matplotlib.pyplot as plt
 import math 
 import numpy as np
