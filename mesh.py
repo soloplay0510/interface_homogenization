@@ -27,6 +27,8 @@ class Mesh_z():
     def Generate_mesh(self,if_merge):
         x_s = self.z[0]+np.arange(self.nx0,self.nx1)*self.H
         y_s = self.z[1]+np.arange(self.ny0,self.ny1)*self.H
+        self.x_s = x_s
+        self.y_s = y_s
         self.x_c, self.y_c = np.meshgrid(x_s , y_s)
         if((x_s[0]- self.x0)<0.5*self.H):
             self.x_mesh = x_s + 0.5*self.H
@@ -66,10 +68,11 @@ class Mesh_z():
             
         return center_x,center_y
         
-    def blocks_cross_gamma(self,gamma_check,k,He):
+    def blocks_cross_gamma(self,gamma_check,k,He,color = 'darkseagreen'):
         n = np.shape(self.x_mesh_f)[0]
         m = np.shape(self.y_mesh_f)[0]
         self.blocks = {}
+        self.gamma_blocks = {}
         count =0
         for i in range (n-1):
             for j in range(m-1):
@@ -94,10 +97,41 @@ class Mesh_z():
                 pts_y = [y0,y0,y1,y1]
                 pts_x_K = [x0K,x1K,x1K,x0K]
                 pts_y_K = [y0K,y0K,y1K,y1K]
-                self.blocks[count] ={'x':pts_x, 'y': pts_y}
-                
+                self.blocks[count] ={'x':pts_x_K, 'y': pts_y_K, 'x_c':self.x_s[i],'y_c':self.y_s[j] }
                 if(gamma_check(x0,x1,y0,y1)):
-                    plt.fill(pts_x_K, pts_y_K,color = 'darkseagreen')
+                    self.gamma_blocks[count] ={'x':pts_x_K, 'y': pts_y_K, 'x_c':self.x_s[i],'y_c':self.y_s[j]}
+                    plt.fill(pts_x_K, pts_y_K,color = color)
+                count = count +1
+        
+
+    def block_side(self,which_side,coarse_blocks):
+        for block in self.blocks:
+            block_center_x = self.blocks[block]['x_c']
+            block_center_y = self.blocks[block]['y_c']
+            for c_block in coarse_blocks:
+                x_0 = coarse_blocks[c_block]['x'][0]
+                x_1 = coarse_blocks[c_block]['x'][1]
+                y_0 = coarse_blocks[c_block]['y'][0]
+                y_1 = coarse_blocks[c_block]['y'][2]
+                if(block_center_x<x_1 and block_center_x>x_0 and block_center_y>y_0 and block_center_y<y_1):
+                    plt.plot(block_center_x,block_center_y,marker = '.',color = 'green',linewidth = 0.3)
+                    break
+                
+        for block in self.gamma_blocks:
+            block_center_x = self.gamma_blocks[block]['x_c']
+            block_center_y = self.gamma_blocks[block]['y_c']
+
+            if which_side(block_center_x,block_center_y):
+                plt.fill(self.gamma_blocks[block]['x'], self.gamma_blocks[block]['y'],color = 'cornsilk')
+                plt.plot(block_center_x,block_center_y,marker = '.',color = 'orange',linewidth = 0.3)
+
+            else:
+                plt.fill(self.gamma_blocks[block]['x'], self.gamma_blocks[block]['y'],color = 'lightblue')
+                plt.plot(block_center_x,block_center_y,marker = '.',color = 'blue',linewidth = 0.3)
+                
+        
+            
+                
                     
                     
             

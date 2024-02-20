@@ -18,16 +18,18 @@ class interface():
         self.f=f
         self.center = 0.5*(np.array(self.start)+np.array(self.end))
 
-    def gamma(self,f):
+    def gamma(self):
         n2 =self.end[0]-self.start[0]
         n1 = self.start[1] - self.end[1]
         t = np.linspace(0, 1, 1000) 
-        q = 0.12*f(2*np.pi*t)
+        q = 0.12*self.f(2*np.pi*t)
         x = self.start[0] +t*n2+q*n1
         y = self.start[1] -t*n1+q*n2
+        self.n1 = n1
+        self.n2= n2
         return x,y
     def plot_gamma(self):
-        self.x,self.y = self.gamma(self.f)
+        self.x,self.y = self.gamma()
         plt.plot(self.x,self.y,color = "forestgreen",linewidth=3)
         
     def determin_sides(self,x,y):
@@ -84,6 +86,17 @@ class interface():
                 break
             
         return crossing
+    def gamma_fun(self,x,y):
+        t = self.n2*(x-self.start[0]) - self.n1*(y-self.start[1])
+        t = t/(self.n1**2 + self.n2**2)
+        value = self.start[0]+self.n2*t+self.n1*0.12*self.f(2*np.pi*t)-x
+        if value >0:
+            return True
+        return False
+    
+
+
+        
     
 
 

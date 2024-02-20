@@ -28,6 +28,7 @@ if __name__ == '__main__':
    y1=1
    H_ep =0.05
    H =0.25
+   oversample_layer = 2
    print("Plotting a UnitSquareMesh")
    fig = plt.figure()
    ax = fig.add_axes((x0, y0, x1-x0, y1-y0))
@@ -49,7 +50,7 @@ if __name__ == '__main__':
    plt.vlines(mesh.x_mesh, y0, y1,color = 'grey')
    plt.hlines(mesh.y_mesh, x0, x1,color = 'grey')
    # center_x,center_y = mesh.oversample(0,1,H_ep,2)
-   # plt.text(center_x-0.1,center_y-0.07, r'$K_H^+(x)$',fontsize=16)
+   # plt.text(center_x-0.1,center_y-0.11, r'$K_H^+(x)$',fontsize=16)
 
    #plot centers
    # plt.plot(mesh.x_c,mesh.y_c,'o',color = 'blue')
@@ -76,15 +77,17 @@ if __name__ == '__main__':
    
    sin_gamma = interface(0.28,0.0,0.77,0.99)
    sin_gamma.plot_gamma()
-   sin_gamma.fill_domain(domain_x,domain_y)
+   # sin_gamma.fill_domain(domain_x,domain_y)
    
    
-   mesh.blocks_cross_gamma(sin_gamma.check_crossing,0,H_ep)
+   mesh.blocks_cross_gamma(sin_gamma.check_crossing,oversample_layer,H_ep)
+   mesh_e.blocks_cross_gamma(sin_gamma.check_crossing,oversample_layer,H_ep,color = 'mediumseagreen')
+   mesh_e.block_side(sin_gamma.gamma_fun,mesh.gamma_blocks)
    # sin_gamma.mark_domain()
    # fig.tight_layout()
    # plt.legend(frameon=False)
    # plt.close()
-   # center_x,center_y  = mesh_e.oversample(4,11,H_ep,0,color = 'orchid',fill = True)            
+   # center_x,center_y  = mesh_e.oversample(5,10,H_ep,0,color = 'orchid',fill = True)            
    # plt.text(center_x-0.035,center_y+0.03, r'$\omega (K)$',fontsize=10)
    ax.set_axis_off()
-   plt.savefig('omega_gamma_0.png',bbox_inches='tight',transparent = True, dpi=300)
+   plt.savefig('omega_gamma_2.png',bbox_inches='tight',transparent = True, dpi=300)
